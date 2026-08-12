@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no">
+
+<title>OxygenOS Calculator</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    background: #151515;
+
+    color: #f5f5f5;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+
+/* =====================================
+   MAIN CALCULATOR
+===================================== */
+
+.calculator {
+
+    width: 100%;
+    max-width: 500px;
+
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    padding:
+        18px
+        20px
+        18px;
+}
+
+
+/* =====================================
+   TOP BAR
+===================================== */
+
+.top-bar {
+
+    height: 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
+/* Three-dot menu */
+
+.menu {
+
+    font-size: 34px;
+
+    line-height: 20px;
+
+    letter-spacing: 2px;
+
+    color: #eeeeee;
+}
+
+
+/* =====================================
+   DISPLAY
+===================================== */
+
+.display-area {
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: flex-end;
+
+    padding:
+        10px
+        8px
+        28px;
+
+    overflow: hidden;
+}
+
+
+.expression {
+
+    width: 100%;
+
+    text-align: right;
+
+    font-size: 52px;
+
+    font-weight: 300;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =====================================
+   BUTTON GRID
+===================================== */
+
+.buttons {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    padding-bottom: 4px;
+}
+
+
+/* =====================================
+   NORMAL BUTTON
+===================================== */
+
+button {
+
+    position: relative;
+
+    border: none;
+
+    outline: none;
+
+    color: #f5f5f5;
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    border-radius: 50%;
+
+    font-size: 37px;
+
+    font-weight: 500;
+
+    /*
+       Flat OxygenOS-like surface
+       No 3D metallic effect
+    */
+
+    background: #303030;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255,255,255,0.04);
+
+    overflow: visible;
+
+    transition:
+        transform 0.12s ease,
+        background 0.18s ease,
+        box-shadow 0.18s ease,
+        filter 0.18s ease;
+}
+
+
+/* =====================================
+   PRESS GLOW
+===================================== */
+
+button.pressed {
+
+    transform: scale(0.94);
+
+    background: #3b3b3b;
+
+    /*
+       Main glow
+    */
+
+    box-shadow:
+
+        0 0 8px
+        rgba(255,255,255,0.32),
+
+        0 0 18px
+        rgba(255,255,255,0.22),
+
+        0 0 32px
+        rgba(255,255,255,0.12),
+
+        inset 0 0 8px
+        rgba(255,255,255,0.08);
+
+    z-index: 5;
+}
+
+
+/* =====================================
+   NEARBY BUTTON REFLECTION
+===================================== */
+
+button.reflection {
+
+    box-shadow:
+
+        0 0 5px
+        rgba(255,255,255,0.12),
+
+        0 0 13px
+        rgba(255,255,255,0.07);
+
+    background: #343434;
+
+    z-index: 2;
+}
+
+
+/* =====================================
+   OPERATOR BUTTONS
+===================================== */
+
+.operator {
+
+    background: #303030;
+}
+
+
+/* Pressed operator */
+
+.operator.pressed {
+
+    background: #3b3b3b;
+
+    box-shadow:
+
+        0 0 9px
+        rgba(255,255,255,0.34),
+
+        0 0 20px
+        rgba(255,255,255,0.20),
+
+        0 0 34px
+        rgba(255,255,255,0.11),
+
+        inset 0 0 8px
+        rgba(255,255,255,0.08);
+}
+
+
+/* =====================================
+   EQUAL BUTTON
+===================================== */
+
+.equals {
+
+    color: #ffffff;
+
+    background: #c7a990;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(255,255,255,0.12);
+}
+
+
+/* Equal pressed */
+
+.equals.pressed {
+
+    background: #d5bca6;
+
+    box-shadow:
+
+        0 0 9px
+        rgba(224,196,172,0.55),
+
+        0 0 20px
+        rgba(224,196,172,0.34),
+
+        0 0 36px
+        rgba(224,196,172,0.18),
+
+        inset 0 0 9px
+        rgba(255,255,255,0.12);
+}
+
+
+/* Equal reflection */
+
+.equals.reflection {
+
+    box-shadow:
+
+        0 0 7px
+        rgba(214,187,165,0.22),
+
+        0 0 15px
+        rgba(214,187,165,0.12);
+}
+
+
+/* =====================================
+   SPECIAL TEXT
+===================================== */
+
+.backspace {
+
+    font-size: 30px;
+}
+
+.double-zero {
+
+    font-size: 31px;
+}
+
+.small-text {
+
+    font-size: 29px;
+}
+
+
+/* =====================================
+   MOBILE HEIGHT
+===================================== */
+
+@media (max-height: 700px)
+and (orientation: portrait) {
+
+    .calculator {
+
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+    .top-bar {
+
+        height: 45px;
+    }
+
+    .display-area {
+
+        padding-bottom: 12px;
+    }
+
+    .expression {
+
+        font-size: 40px;
+    }
+
+    .buttons {
+
+        gap: 10px;
+    }
+
+    button {
+
+        font-size: 30px;
+    }
+}
+
+
+/* =====================================
+   LANDSCAPE
+===================================== */
+
+@media (orientation: landscape) {
+
+    .calculator {
+
+        max-width: 700px;
+
+        padding:
+            8px
+            25px;
+    }
+
+    .top-bar {
+
+        height: 40px;
+    }
+
+    .display-area {
+
+        padding-bottom: 10px;
+    }
+
+    .expression {
+
+        font-size: 38px;
+    }
+
+    .buttons {
+
+        gap: 10px;
+    }
+
+    button {
+
+        font-size: 28px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<div class="calculator">
+
+
+    <!-- ================================
+         TOP BAR
+    ================================= -->
+
+    <div class="top-bar">
+
+        <div class="menu">
+            ⋮
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         DISPLAY
+    ================================= -->
+
+    <div class="display-area">
+
+        <div
+            class="expression"
+            id="display">
+            0
+        </div>
+
+    </div>
+
+
+    <!-- ================================
+         BUTTONS
+    ================================= -->
+
+    <div class="buttons">
+
+
+        <button
+            onclick="clearAll()"
+            class="small-text">
+
+            AC
+
+        </button>
+
+
+        <button
+            onclick="percent()"
+            class="small-text">
+
+            %
+
+        </button>
+
+
+        <button
+            onclick="backspace()"
+            class="backspace">
+
+            ⌫
+
+        </button>
+
+
+        <button
+            onclick="operator('/')"
+            class="operator">
+
+            ÷
+
+        </button>
+
+
+        <!-- 7 8 9 -->
+
+        <button onclick="number('7')">
+            7
+        </button>
+
+        <button onclick="number('8')">
+            8
+        </button>
+
+        <button onclick="number('9')">
+            9
+        </button>
+
+        <button
+            onclick="operator('*')"
+            class="operator">
+
+            ×
+
+        </button>
+
+
+        <!-- 4 5 6 -->
+
+        <button onclick="number('4')">
+            4
+        </button>
+
+        <button onclick="number('5')">
+            5
+        </button>
+
+        <button onclick="number('6')">
+            6
+        </button>
+
+        <button
+            onclick="operator('-')"
+            class="operator">
+
+            −
+
+        </button>
+
+
+        <!-- 1 2 3 -->
+
+        <button onclick="number('1')">
+            1
+        </button>
+
+        <button onclick="number('2')">
+            2
+        </button>
+
+        <button onclick="number('3')">
+            3
+        </button>
+
+        <button
+            onclick="operator('+')"
+            class="operator">
+
+            +
+
+        </button>
+
+
+        <!-- Bottom -->
+
+        <button
+            onclick="number('00')"
+            class="double-zero">
+
+            00
+
+        </button>
+
+
+        <button onclick="number('0')">
+            0
+        </button>
+
+
+        <button onclick="decimal()">
+            .
+        </button>
+
+
+        <button
+            onclick="calculate()"
+            class="equals">
+
+            =
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================
+   CALCULATOR VARIABLES
+===================================== */
+
+let current = "0";
+
+let previous = "";
+
+let currentOperator = null;
+
+let resetNext = false;
+
+
+const display =
+    document.getElementById("display");
+
+
+/* =====================================
+   DISPLAY
+===================================== */
+
+function updateDisplay() {
+
+    display.textContent = current;
+
+}
+
+
+/* =====================================
+   NUMBER
+===================================== */
+
+function number(num) {
+
+    if (resetNext) {
+
+        current = "";
+
+        resetNext = false;
+    }
+
+
+    if (
+        current === "0" &&
+        num !== "00"
+    ) {
+
+        current = num;
+
+    }
+
+    else if (current.length < 16) {
+
+        current += num;
+
+    }
+
+
+    updateDisplay();
+
+}
+
+
+/* =====================================
+   DECIMAL
+===================================== */
+
+function decimal() {
+
+    if (resetNext) {
+
+        current = "0";
+
+        resetNext = false;
+
+    }
+
+
+    if (!current.includes(".")) {
+
+        current += ".";
+
+    }
+
+
+    updateDisplay();
+
+}
+
+
+/* =====================================
+   OPERATOR
+===================================== */
+
+function operator(op) {
+
+    if (
+        currentOperator !== null &&
+        !resetNext
+    ) {
+
+        calculate();
+
+    }
+
+
+    previous = current;
+
+    currentOperator = op;
+
+    resetNext = true;
+
+}
+
+
+/* =====================================
+   CALCULATE
+===================================== */
+
+function calculate() {
+
+    if (
+        currentOperator === null ||
+        previous === ""
+    ) {
+
+        return;
+
+    }
+
+
+    let a =
+        parseFloat(previous);
+
+    let b =
+        parseFloat(current);
+
+    let result;
+
+
+    switch (currentOperator) {
+
+        case "+":
+
+            result = a + b;
+
+            break;
+
+
+        case "-":
+
+            result = a - b;
+
+            break;
+
+
+        case "*":
+
+            result = a * b;
+
+            break;
+
+
+        case "/":
+
+            if (b === 0) {
+
+                current = "Error";
+
+                previous = "";
+
+                currentOperator = null;
+
+                resetNext = true;
+
+                updateDisplay();
+
+                return;
+
+            }
+
+            result = a / b;
+
+            break;
+
+    }
+
+
+    if (Number.isFinite(result)) {
+
+        result =
+            parseFloat(
+                result.toPrecision(12)
+            );
+
+        current =
+            String(result);
+
+    }
+
+
+    previous = "";
+
+    currentOperator = null;
+
+    resetNext = true;
+
+
+    updateDisplay();
+
+}
+
+
+/* =====================================
+   PERCENT
+===================================== */
+
+function percent() {
+
+    let value =
+        parseFloat(current);
+
+
+    if (!isNaN(value)) {
+
+        current =
+            String(value / 100);
+
+        updateDisplay();
+
+    }
+
+}
+
+
+/* =====================================
+   BACKSPACE
+===================================== */
+
+function backspace() {
+
+    if (
+        resetNext ||
+        current === "Error"
+    ) {
+
+        current = "0";
+
+        resetNext = false;
+
+    }
+
+    else {
+
+        current =
+            current.slice(0, -1);
+
+
+        if (
+            current === "" ||
+            current === "-"
+        ) {
+
+            current = "0";
+
+        }
+
+    }
+
+
+    updateDisplay();
+
+}
+
+
+/* =====================================
+   CLEAR
+===================================== */
+
+function clearAll() {
+
+    current = "0";
+
+    previous = "";
+
+    currentOperator = null;
+
+    resetNext = false;
+
+
+    updateDisplay();
+
+}
+
+
+/* =====================================
+   OXYGENOS-STYLE GLOW SYSTEM
+===================================== */
+
+const buttons =
+    Array.from(
+        document.querySelectorAll(
+            ".buttons button"
+        )
+    );
+
+
+function removeGlow() {
+
+    buttons.forEach(button => {
+
+        button.classList.remove(
+            "pressed"
+        );
+
+        button.classList.remove(
+            "reflection"
+        );
+
+    });
+
+}
+
+
+/*
+   Find buttons near the pressed button
+*/
+
+function createReflection(activeButton) {
+
+    const activeRect =
+        activeButton.getBoundingClientRect();
+
+
+    const activeX =
+        activeRect.left +
+        activeRect.width / 2;
+
+
+    const activeY =
+        activeRect.top +
+        activeRect.height / 2;
+
+
+    buttons.forEach(button => {
+
+        if (button === activeButton)
+            return;
+
+
+        const rect =
+            button.getBoundingClientRect();
+
+
+        const x =
+            rect.left +
+            rect.width / 2;
+
+
+        const y =
+            rect.top +
+            rect.height / 2;
+
+
+        const distance =
+            Math.sqrt(
+                Math.pow(x - activeX, 2) +
+                Math.pow(y - activeY, 2)
+            );
+
+
+        /*
+           Nearby buttons get
+           subtle reflected glow.
+        */
+
+        if (distance < 150) {
+
+            button.classList.add(
+                "reflection"
+            );
+
+        }
+
+    });
+
+}
+
+
+/* =====================================
+   TOUCH / MOUSE PRESS
+===================================== */
+
+buttons.forEach(button => {
+
+
+    button.addEventListener(
+        "pointerdown",
+        function(event) {
+
+            /*
+               Prevent browser selection
+            */
+
+            event.preventDefault();
+
+
+            removeGlow();
+
+
+            /*
+               Main button glow
+            */
+
+            button.classList.add(
+                "pressed"
+            );
+
+
+            /*
+               Nearby reflection
+            */
+
+            createReflection(button);
+
+
+            /*
+               Keep receiving pointer events
+            */
+
+            try {
+
+                button.setPointerCapture(
+                    event.pointerId
+                );
+
+            } catch(e) {}
+
+        }
+    );
+
+
+    button.addEventListener(
+        "pointerup",
+        function() {
+
+            /*
+               Small delay makes the glow
+               feel softer after tapping.
+            */
+
+            setTimeout(
+                removeGlow,
+                90
+            );
+
+        }
+    );
+
+
+    button.addEventListener(
+        "pointercancel",
+        function() {
+
+            removeGlow();
+
+        }
+    );
+
+
+    button.addEventListener(
+        "pointerleave",
+        function(event) {
+
+            /*
+               Don't remove glow while
+               finger is still pressing.
+            */
+
+            if (
+                event.buttons === 0
+            ) {
+
+                removeGlow();
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =====================================
+   KEYBOARD SUPPORT
+===================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        const key =
+            event.key;
+
+
+        if (
+            key >= "0" &&
+            key <= "9"
+        ) {
+
+            number(key);
+
+        }
+
+
+        else if (key === ".") {
+
+            decimal();
+
+        }
+
+
+        else if (
+            key === "+" ||
+            key === "-" ||
+            key === "*" ||
+            key === "/"
+        ) {
+
+            operator(key);
+
+        }
+
+
+        else if (
+            key === "Enter" ||
+            key === "="
+        ) {
+
+            calculate();
+
+        }
+
+
+        else if (
+            key === "Backspace"
+        ) {
+
+            backspace();
+
+        }
+
+
+        else if (
+            key === "Escape"
+        ) {
+
+            clearAll();
+
+        }
+
+
+        else if (key === "%") {
+
+            percent();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
